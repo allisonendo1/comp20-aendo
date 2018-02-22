@@ -1,0 +1,14 @@
+/* Style Sheet for RickRoll */
+
+body {
+	background-color: #bfd2d2;
+	font-family: "Avenir";
+	font-size: 18px;
+	color: black;
+	text-align: center;
+}
+
+#lyrics {
+	margin-left: 20%;
+	margin-right: 20%;
+}

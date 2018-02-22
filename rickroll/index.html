@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Rick Roll</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+<h1 id="title">Rick Roll</h1>
+
+<video src="https://www.cs.tufts.edu/comp/20/rickroll.mp4" id="rickroll" controls></video>
+<div id="lyrics"></div>
+
+<script>
+	var vid = document.getElementById("rickroll");
+	var lyrics = document.getElementById("lyrics");
+function modifyText() {
+	if (vid.currentTime >= 0 && vid.currentTime <= 34) {
+		lyrics.innerHTML = "We're no strangers to love\
+		You know the rules and so do I\
+		A full commitment's what I'm thinking of\
+		You wouldn't get this from any other guy";
+	} else if (vid.currentTime >= 35 && vid.currentTime <= 41) {
+		lyrics.innerHTML = "I just wanna tell you how I'm feeling\
+		Gotta make you understand";
+	} else if (vid.currentTime >= 42 && vid.currentTime <= 59) {
+		lyrics.innerHTML = "Never gonna give you up\
+		Never gonna let you down\
+		Never gonna run around and desert you\
+		Never gonna make you cry\
+		Never gonna say goodbye\
+		Never gonna tell a lie and hurt you";
+	} else if (vid.currentTime >= 60 && vid.currentTime <= 76) {
+		lyrics.innerHTML = "We've known each other for so long\
+		Your heart's been aching, but\
+		You're too shy to say it\
+		Inside, we both know what's been going on\
+		We know the game and we're gonna play it";
+	} else if (vid.currentTime >= 77 && vid.currentTime <= 84) {
+		lyrics.innerHTML = "And if you ask me how I'm feeling\
+		Don't tell me you're too blind to see";
+	} else if (vid.currentTime >= 85 && vid.currentTime <= 101) {
+		lyrics.innerHTML = "Never gonna give you up\
+		Never gonna let you down\
+		Never gonna run around and desert you\
+		Never gonna make you cry\
+		Never gonna say goodbye\
+		Never gonna tell a lie and hurt you";
+	} else if (vid.currentTime >= 102 && vid.currentTime <= 118) {
+		lyrics.innerHTML = "Never gonna give you up\
+		Never gonna let you down\
+		Never gonna run around and desert you\
+		Never gonna make you cry\
+		Never gonna say goodbye\
+		Never gonna tell a lie and hurt you";
+	} else if (vid.currentTime >= 119 && vid.currentTime <= 135) {
+		lyrics.innerHTML = "(Ooh, give you up)\
+		(Ooh, give you up)\
+		Never gonna give, never gonna give\
+		(Give you up)\
+		Never gonna give, never gonna give\
+		(Give you up)";
+	} else if (vid.currentTime >= 136 && vid.currentTime <= 152) {
+		lyrics.innerHTML = "We've known each other for so long\
+		Your heart's been aching, but\
+		You're too shy to say it\
+		Inside, we both know what's been going on\
+		We know the game and we're gonna play it";
+	} else if (vid.currentTime >= 153 && vid.currentTime <= 160) {
+		lyrics.innerHTML = "I just wanna tell you how I'm feeling\
+		Gotta make you understand";
+	} else if (vid.currentTime >= 161 && vid.currentTime <= 177) {
+		lyrics.innerHTML = "Never gonna give you up\
+		Never gonna let you down\
+		Never gonna run around and desert you\
+		Never gonna make you cry\
+		Never gonna say goodbye\
+		Never gonna tell a lie and hurt you";
+	} else if (vid.currentTime >= 178 && vid.currentTime <= 195) {
+		lyrics.innerHTML = "Never gonna give you up\
+		Never gonna let you down\
+		Never gonna run around and desert you\
+		Never gonna make you cry\
+		Never gonna say goodbye\
+		Never gonna tell a lie and hurt you";
+	} else if (vid.currentTime >= 196 && vid.currentTime <= 212){
+		lyrics.innerHTML = "Never gonna give you up\
+		Never gonna let you down\
+		Never gonna run around and desert you\
+		Never gonna make you cry\
+		Never gonna say goodbye\
+		Never gonna tell a lie and hurt you";
+	}
+}
+
+vid.addEventListener("timeupdate", modifyText);
+</script>
+</body>
+</html>	
