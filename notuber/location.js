@@ -1,4 +1,3 @@
-/*Gets current location*/
 var map;
 var myLat = 0;
 var myLng = 0;
@@ -17,15 +16,7 @@ function gotLocation(position) {
     myLng = position.coords.longitude;
     outputElem = document.getElementById("info");
     myLocation = new google.maps.LatLng(myLat, myLng);
-    marker = new google.maps.Marker({
-        position: myLocation,
-        map: map,
-        icon: "myicon.png",
-        title: "You are here"
-    });
-    marker.setMap(map);
     map.setZoom(15);
-    map.panTo(marker.position);
     getData();
 }
 
@@ -39,12 +30,10 @@ function initMap() {
 }
 
 function getData() {
-    /*Sends your username and location to the server*/
     var request = new XMLHttpRequest();
     var url = "https://jordan-marsh.herokuapp.com/rides";
     var params = "username=BqndCOzP0m&lat=" + myLat + "&lng=" + myLng;
     request.open("POST", url);
-    /*Sends info along with request*/
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     request.onreadystatechange = function () {
@@ -55,30 +44,43 @@ function getData() {
             alert("Something went wrong");
         }
     }
-
     request.send(params);
 }
 
 function processData(data) {
     var processedData = JSON.parse(data);
-    //if i'm a passenger
+    // Handles case of being a passenger
     if (Object.keys(processedData) == "vehicles") {
+        var minDistance = 10000000000000000000;
         for (var i = 0; i < processedData.vehicles.length; i++) {
-            //create object for location
             var carLocation = new google.maps.LatLng(processedData.vehicles[i].lat, processedData.vehicles[i].lng);
-            //calculate distance
             var distance = (google.maps.geometry.spherical.computeDistanceBetween(carLocation, myLocation) / 1609.34);
-            //create icon for the car
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+            marker = new google.maps.Marker({
+            position: myLocation,
+            map: map,
+            icon: "myicon.png",
+            title: "You are here"
+            });
+            marker.setMap(map);
+            map.panTo(marker.position);
+            var myWindowContent = "username: BqndCOzP0m " + "closest vehicle: " + minDistance;
+            marker.info = new google.maps.InfoWindow({
+                content: myWindowContent
+            })
+            google.maps.event.addListener(marker, 'click', function() {
+                marker.info.open(map, marker)
+            });
             icon = "car.png";
-            //set icon for the car to all cars
             var carMarkers = [];
             carMarkers[i] = new google.maps.Marker({
                 position: carLocation,
                 icon: icon,
                 map: map
             });
-            //set content of info windows
-            var windowContent = "username: " + processedData.vehicles[i].username + "distance: " + distance;
+            var windowContent = "username: " + processedData.vehicles[i].username + " " + "distance: " + distance;
             carMarkers[i].info = new google.maps.InfoWindow({
                 content: windowContent
             });
@@ -92,9 +94,28 @@ function processData(data) {
         }
     }
     else {
+        var minDistance = 10000000000000000000;
         for (var i = 0; i < processedData.passengers.length; i++) {
             var pasLocation = new google.maps.LatLng(processedData.passengers[i].lat, processedData.passengers[i].lng);
             var distance = (google.maps.geometry.spherical.computeDistanceBetween(pasLocation, myLocation) / 1609.34);
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+            marker = new google.maps.Marker({
+            position: myLocation,
+            map: map,
+            icon: "myicon.png",
+            title: "You are here"
+            });
+            marker.setMap(map);
+            map.panTo(marker.position);
+            var myWindowContent = "username: BqndCOzP0m " + "closest passenger: " + minDistance;
+            marker.info = new google.maps.InfoWindow({
+                content: myWindowContent
+            })
+            google.maps.event.addListener(marker, 'click', function() {
+                marker.info.open(map, marker)
+            });
             icon = "passengericon.png";
             var pasMarkers = [];
             pasMarkers[i] = new google.maps.Marker({
@@ -102,7 +123,7 @@ function processData(data) {
                 icon: icon,
                 map: map
             });
-            var windowContent = "username: " + processedData.passengers[i].username + "distance: " + distance;
+            var windowContent = "username: " + processedData.passengers[i].username + " " + "distance: " + distance;
             pasMarkers[i].info = new google.maps.InfoWindow({
                 content: windowContent
             });
