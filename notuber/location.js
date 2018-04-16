@@ -31,7 +31,7 @@ function initMap() {
 
 function getData() {
     var request = new XMLHttpRequest();
-    var url = "https://jordan-marsh.herokuapp.com/rides";
+    var url = "http://ancient-woodland-51895.herokuapp.com/rides";
     var params = "username=BqndCOzP0m&lat=" + myLat + "&lng=" + myLng;
     request.open("POST", url);
     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
