@@ -1,0 +1,58 @@
+INTRODUCTION
+
+The product being analyzed in this report is a ride-sharing application very similar to Uber and Lyft. This product allows users to request rides and for vehicles to find passengers who need rides. The front end of the application includes a map with all the vehicles/passengers on the map. If you are a passenger, vehicles are displayed, and if you are a vehicle passengers are displayed. When you click on the passengers/vehicles, relevant information like their location, username and distance are displayed. The back end of this product includes a server that was created to manage the ride requests. Passengers and vehicles can post their data to the server and receive information on other vehicles and passengers who made post requests in the past five minutes or less. Vehicles can also get more information about a certain passenger by executing a get request using the passenger's username in a query string. In addition, a list of all the passengers who made requests with their locations and timestamps is dispayed on a heroku webpage. 
+
+I was hired as a consultant to examine this application and try to find security flaws within this system and make recommendations on how to improve this application from a security standpoint.
+
+METHODOLOGY
+
+The very first thing I did when I began this assignment was I tested the application using the grading criteria from assignment 3 just to ensure that the server worked. It did, so I decided to proceed by black box testing the application (performing tests without reading the source code). When I was performing this testing, the first thing I tested was a vulnerability known as Cross Site Scripting. I tried initiating a post request but instead of inputing a normal username, I inputed script tags into this field. When I did this, the username displayed on the screen just in script tags and the code wasn't executed (See blackbox_testing.png). After this test failed, I decided to take a look at the source code and see if I could find any vulnerabilities that were less obvious. Upon looking at the code, I noticed that it was written in Python rather than JavaScript, so it makes sense why the XSS didn't work. In addition the inputs were sanitized. Since the inputs were sanitized, I also ruled out injections and decided to look at the source code very closely for other vulnerabilities. I did a lot of Google searches to learn more about other vulnerabilities, since the most obvious ones weren't present in this application. 
+
+ABSTRACT OF FINDINGS
+
+Through examining the code, I came accross some security vulnerabilities in the application. My major findings are briefly outlined below. 
+1. The application allows users to enter latitudes and longitudes that are not defined and doesn't check to make sure that these inputs are valid. This is a huge problem because a hacker could overwrite existing passengers locations with new locations that are not valid. This is bad because if the locations of the passengers are invalid, the driver doesn't know where to go to pick the passenger up at. This problem can be fixed by adding a few lines of code that check that the inputted latitude and longitudes are valid. 
+2. All the usernames of the vehicles are explicitly in the source code. This is bad because if someone were able to gain access to this, they could potentially impersonate a vehicle. To fix this I would encrypt usernames and ensure that there are strong algorithms and keys in place. 
+3. The application allows anyone to access the webpage with the passengers requests (including hackers). Only drivers should be able to access this. To fix this problem, I would edit a couple lines of code so that access is restricted to the desired origins. 
+
+ISSUES AND TECHNICAL ANALYSIS
+
+1. Allows user to enter usernames that are not defined (NaN):
+Location: This issue occurs in the post function in app.py.
+Description: There is no code that checks to see if the user has entered in NaN for the latitude or longitude.(See NaN_check_terminal.png and NaN_check_webpage.png). I found this issue by scanning through the post function. 
+Severity: High. This may not seem like a huge issue, however it has the potential to be a large problem. For example, if a hacker is checking the webpage to see where certain passengers are, they could get their usernames, locations and when the car was requested. They could curl this username with null latitudes and longitudes, which would overwrite the old values due to the nature of MongoDb. Then on the webpage that username would have their latitude and longitude defined as NaN. This would make it so the driver couldn't pick up the passenger. 
+Solution: To fix this problem, I would recommend performing a check before line 76 to make sure that latitude and longitude aren't NaN. To do this I would create a variable called validlat = numpy.isnan(lat). I would also create a variable called validlng = numpy.isnan(lng). I would then embed the if statement (line 76) and the else statement (line 86) in another if statement that checks if there is a valid latitude and longitude. The statement would look something like "if validlat is true and validlng is true". Here are some articles that may be helpful https://docs.scipy.org/doc/numpy/reference/generated/numpy.isnan.html, https://stackoverflow.com/questions/944700/how-can-i-check-for-nan-in-python?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa. 
+
+2. Hard-Coded Usernames:
+Location: This issue occurs in lines 18-21 of app.py.
+Description: The issue is that the usernames for all the vehicles are specified right in the source code. This is bad
+because if someone reads the source code, they could get one of these usernames and pretend to be a vehicle when they really aren't. They would do this by sending a post request with one of these usernames, which is very easy. I found this by looking through the code and doing some google searches on security vulnerabilities. 
+Severity: High - Usernames in the case are a sensitive piece of information because this is all someone needs to impersonate a vehicle.
+Solution: To at least alleviate this problem I would 1. Encrypt usernames of vehicles 2. Ensure that strong algorithms and strong keys are used and proper key management is happening. I would consider using FIPS validated cryptographic modules specifically. Here is a source with more information on how to prevent sensitive data from being exposed to hackers. https://www.owasp.org/index.php/Top_10_2013-A6-Sensitive_Data_Exposure.
+
+3. Access-Control-Allow-Origin:
+Location: This issues occursn in line 25 of app.py
+Description: The issue is that the '*' character in response.headers['Access-Control-Allow-Origin'] = '*' makes it so any origin can access the resource or webpage in this case. I found this issue by reading through the code and googling security vulnerabilities.
+Severity: High - Ideally only certified drivers should have access to this webpage because they are the only ones who need to know about the users requests for vehicless. Allowing anyone to access this page is very bad because makes it easy for hackers to get information they shouldn't have access to. Restricting the access for this reason is very important and could prevent security problems with the platform.
+Solution: Specify the origins that you would like to be able to access your page. For example, if you wanted to only allow https://developer.mozilla.org to access your resource, you would write these lines of code instead:
+Access-Control-Allow-Origin: https://developer.mozilla.org
+Vary: Origin
+See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin for more information. Specifying which origins can access the resource can prevent hackers from accessing your resources, which improves security. 
+
+CONCLUSION
+
+Another recommendation in the future would be to create an authentication method so that vehicles and passengers could login to their accounts. This would be costly to set up in terms of time, but it will make the platform more secure. I would implement the recommendations I made first. 
+
+Out of the suggestions I previously made, the least costly one to implement would be the first one. All this requires is a couple of lines of code. The other two are also relatively easy to implement but take a bit more coding than the first one. For this reason, I would start by updating the code so that the user can't enter null values for latitude and longitude. I would then move onto trying to fix the other two issues. 
+
+
+REFERENCES
+http://www.petecorey.com/blog/2017/07/03/what-is-nosql-injection/
+http://flask.pocoo.org/docs/0.12/security/
+https://www.veracode.com/security/web-application-vulnerabilities
+https://www.owasp.org/index.php/Top_10_2013-A6-Sensitive_Data_Exposure
+https://wiki.sei.cmu.edu/confluence/display/java/MSC03-J.+Never+hard+code+sensitive+information
+https://docs.scipy.org/doc/numpy/reference/generated/numpy.isnan.html
+https://stackoverflow.com/questions/944700/how-can-i-check-for-nan-in-python?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
+
