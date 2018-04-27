@@ -1,6 +1,6 @@
 INTRODUCTION
 
-The product being analyzed in this report is a ride-sharing application very similar to Uber and Lyft. This product allows users to request rides and for vehicles to find passengers who need rides. The front end of the application includes a map with all the vehicles/passengers on the map. If you are a passenger, vehicles are displayed, and if you are a vehicle passengers are displayed. When you click on the passengers/vehicles, relevant information like their location, username and distance are displayed. The back end of this product includes a server that was created to manage the ride requests. Passengers and vehicles can post their data to the server and receive information on other vehicles and passengers who made post requests in the past five minutes or less. Vehicles can also get more information about a certain passenger by executing a get request using the passenger's username in a query string. In addition, a list of all the passengers who made requests with their locations and timestamps is dispayed on a heroku webpage. 
+The product being analyzed in this report is a ride-sharing application very similar to Uber and Lyft. This product allows users to request rides and for vehicles to find passengers who need rides. The front end of the application includes a map with all the vehicles/passengers on the map. If you are a passenger, vehicles are displayed, and if you are a vehicle passengers are displayed. When you click on the passengers/vehicles, relevant information like their location, username and distance are displayed. The back end of this product includes a server that was created to manage the ride requests. Passengers and vehicles can post their data to the server and receive information about other vehicles and passengers who made post requests in the past five minutes or less. Vehicles can also get more information about a certain passenger by executing a get request using the passenger's username in a query string. In addition, a list of all the passengers who made requests with their locations and timestamps is dispayed on a heroku webpage. 
 
 I was hired as a consultant to examine this application and try to find security flaws within this system and make recommendations on how to improve this application from a security standpoint.
 
@@ -11,7 +11,7 @@ The very first thing I did when I began this assignment was I tested the applica
 ABSTRACT OF FINDINGS
 
 Through examining the code, I came accross some security vulnerabilities in the application. My major findings are briefly outlined below. 
-1. The application allows users to enter latitudes and longitudes that are not defined and doesn't check to make sure that these inputs are valid. This is a huge problem because a hacker could overwrite existing passengers locations with new locations that are not valid. This is bad because if the locations of the passengers are invalid, the driver doesn't know where to go to pick the passenger up at. This problem can be fixed by adding a few lines of code that check that the inputted latitude and longitudes are valid. 
+1. The application allows users to enter latitudes and longitudes that are not defined and doesn't check to make sure that these inputs are valid. This is a huge problem because a hacker could overwrite existing passengers locations with new locations that are not valid. This is bad because if the locations of the passengers are invalid, the driver doesn't know where to go to pick the passenger up at. This problem can be fixed by adding a few lines of code that check that the inputted latitudes and longitudes are valid. 
 2. All the usernames of the vehicles are explicitly in the source code. This is bad because if someone were able to gain access to this, they could potentially impersonate a vehicle. To fix this I would encrypt usernames and ensure that there are strong algorithms and keys in place. 
 3. The application allows anyone to access the webpage with the passengers requests (including hackers). Only drivers should be able to access this. To fix this problem, I would edit a couple lines of code so that access is restricted to the desired origins. 
 
@@ -33,17 +33,17 @@ Solution: To at least alleviate this problem I would 1. Encrypt usernames of veh
 3. Access-Control-Allow-Origin:
 Location: This issues occursn in line 25 of app.py
 Description: The issue is that the '*' character in response.headers['Access-Control-Allow-Origin'] = '*' makes it so any origin can access the resource or webpage in this case. I found this issue by reading through the code and googling security vulnerabilities.
-Severity: High - Ideally only certified drivers should have access to this webpage because they are the only ones who need to know about the users requests for vehicless. Allowing anyone to access this page is very bad because makes it easy for hackers to get information they shouldn't have access to. Restricting the access for this reason is very important and could prevent security problems with the platform.
+Severity: High - Ideally only certified drivers should have access to this webpage because they are the only ones who need to know about the users requests for vehicles. Allowing anyone to access this page is very bad because makes it easy for hackers to get information they shouldn't have access to. Restricting the access for this reason is very important and could prevent security problems with the platform.
 Solution: Specify the origins that you would like to be able to access your page. For example, if you wanted to only allow https://developer.mozilla.org to access your resource, you would write these lines of code instead:
 Access-Control-Allow-Origin: https://developer.mozilla.org
 Vary: Origin
-See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin for more information. Specifying which origins can access the resource can prevent hackers from accessing your resources, which improves security. 
+See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin for more information. Specifying which origins can access the webpage can prevent hackers from accessing your resources, which improves security. 
 
 CONCLUSION
 
 Another recommendation in the future would be to create an authentication method so that vehicles and passengers could login to their accounts. This would be costly to set up in terms of time, but it will make the platform more secure. I would implement the recommendations I made first. 
 
-Out of the suggestions I previously made, the least costly one to implement would be the first one. All this requires is a couple of lines of code. The other two are also relatively easy to implement but take a bit more coding than the first one. For this reason, I would start by updating the code so that the user can't enter null values for latitude and longitude. I would then move onto trying to fix the other two issues. 
+Out of the suggestions I previously made, the least costly one to implement would be the first one. All this requires is a couple of lines of code. The other two are also relatively easy to implement but take a bit more coding than the first one. For this reason, I would start by updating the code so that the user can't enter null values for latitude and longitude. I would then move on to trying to fix the other two issues. 
 
 
 REFERENCES
